@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import MultimediaScreen from './screens/MultimediaScreen';
 
 import HomeScreen from './screens/HomeScreen';
 import ListadoScreen from './screens/ListadoScreen';
@@ -22,6 +23,11 @@ export default function App() {
         {/**LISTADO */}
         <Stack.Screen name="Listado" component={ListadoScreen} options={{ title: 'ENDERS Basket' }} />
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer> 
   );
+  <Stack.Screen 
+  name="Multimedia" 
+  component={MultimediaScreen} 
+  options={{ title: 'Multimedia' }} 
+/>
 }
