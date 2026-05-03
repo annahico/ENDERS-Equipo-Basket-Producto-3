@@ -122,7 +122,7 @@ Los campos `foto` y `videos` pueden apuntar a recursos locales incluidos en `ass
 
 ## Ejecucion
 
-Para iniciar el proyecto con Expo:
+Para iniciar el proyecto:
 
 ```bash
 npm start
@@ -131,9 +131,16 @@ npm start
 Tambien se puede ejecutar directamente en una plataforma concreta:
 
 ```bash
+npm run expo
 npm run android
 npm run ios
 npm run web
+```
+
+Para comprobar que compila como proyecto web de Expo:
+
+```bash
+npm run build
 ```
 
 Si aparecen problemas de cache durante el desarrollo, se puede reiniciar Expo con:
@@ -165,7 +172,6 @@ Desde el listado se envia el jugador seleccionado mediante `route.params`. La pa
 Para la entrega del producto se debe incluir:
 
 - Enlace al repositorio de GitHub.
-- Enlace al proyecto funcionando en CodeSandbox.
 - Documento DOC o PDF con la documentacion solicitada.
 - Proyecto comprimido sin la carpeta `node_modules`.
 

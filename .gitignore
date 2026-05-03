@@ -40,5 +40,4 @@ yarn-error.*
 /ios
 /android
 .env
-firebase.config.js
-.vscode
+.vscod
