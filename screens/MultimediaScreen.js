@@ -1,157 +1,152 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Video, ResizeMode } from "expo-av";
 
-export default function MultimediaScreen({ navigation }) {
-  const [reproduciendo, setReproduciendo] = useState(false);
+const videoMap = {
+  'assets/videos/jugador1/video1.mp4': require('../assets/videos/jugador1/video1.mp4'),
+  'assets/videos/jugador2/video1.mp4': require('../assets/videos/jugador2/video1.mp4'),
+  'assets/videos/jugador3/video1.mp4': require('../assets/videos/jugador3/video1.mp4'),
+  'assets/videos/jugador4/video1.mp4': require('../assets/videos/jugador4/video1.mp4'),
+  'assets/videos/jugador5/video1.mp4': require('../assets/videos/jugador5/video1.mp4'),
+};
+
+export default function MultimediaScreen({ route, navigation }) {
+  const [currentIndex, setCurrentIndex] = useState(route.params?.videoIndex ?? 0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const videoRef = useRef(null);
+
+  if (!route.params?.player) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>
+          No se ha seleccionado ningún jugador.
+        </Text>
+      </View>
+    );
+  }
+
+  const { player } = route.params;
+  const videos = player.videos || [];
+  const currentVideoSource = videoMap[videos[currentIndex]];
+
+  useEffect(() => {
+    setIsPlaying(false);
+  }, [currentIndex]);
+
+  const handlePlayPause = async () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      await videoRef.current.pauseAsync();
+    } else {
+      await videoRef.current.playAsync();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  };
+
+  const handleNext = () => {
+    if (currentIndex < videos.length - 1) setCurrentIndex(currentIndex + 1);
+  };
+
+  const handleMute = async () => {
+    if (!videoRef.current) return;
+    await videoRef.current.setIsMutedAsync(!isMuted);
+    setIsMuted(!isMuted);
+  };
+
+  const handleRestart = async () => {
+    if (!videoRef.current) return;
+    await videoRef.current.setPositionAsync(0);
+    await videoRef.current.playAsync();
+    setIsPlaying(true);
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Multimedia</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
-      <View style={styles.card}>
-        <Text style={styles.subtitulo}>Zona multimedia del jugador</Text>
+      <Text style={styles.titulo}>Highlights</Text>
+      <Text style={styles.jugador}>{player.nombre} {player.apellidos}</Text>
+      <Text style={styles.contador}>Vídeo {currentIndex + 1} de {videos.length}</Text>
 
-        <View style={styles.reproductor}>
-          <Image
-            style={styles.imagen}
-            source={{
-              uri: "https://images.unsplash.com/photo-1546519638-68e109498ffc",
+      <View style={styles.reproductorContainer}>
+        {currentVideoSource ? (
+          <Video
+            ref={videoRef}
+            key={currentIndex}
+            source={currentVideoSource}
+            style={styles.video}
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping={false}
+            isMuted={isMuted}
+            onPlaybackStatusUpdate={status => {
+              if (status.isLoaded) setIsPlaying(status.isPlaying);
             }}
           />
+        ) : (
+          <View style={styles.sinVideo}>
+            <Text style={styles.sinVideoTexto}>Vídeo no disponible</Text>
+          </View>
+        )}
+      </View>
 
-          <Text style={styles.estado}>
-            {reproduciendo ? "Contenido en reproducción" : "Contenido pausado"}
-          </Text>
-        </View>
-
-        <Text style={styles.descripcion}>
-          En esta pantalla se muestra el contenido multimedia relacionado con el
-          equipo y sus jugadores. Esta zona simula un reproductor con botones de
-          interacción para reproducir, pausar y volver a la pantalla principal.
-        </Text>
-
-        <View style={styles.botonesFila}>
-          <TouchableOpacity
-            style={styles.boton}
-            onPress={() => setReproduciendo(true)}
-          >
-            <Text style={styles.textoBoton}>▶ Reproducir</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.boton}
-            onPress={() => setReproduciendo(false)}
-          >
-            <Text style={styles.textoBoton}>⏸ Pausar</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.botonesGrid}>
 
         <TouchableOpacity
-          style={styles.botonSecundario}
-          onPress={() => navigation.navigate("Home")}
+          style={[styles.boton, currentIndex === 0 && styles.botonDesactivado]}
+          onPress={handlePrev}
+          disabled={currentIndex === 0}
         >
-          <Text style={styles.textoSecundario}>Volver al inicio</Text>
+          <Text style={styles.textoBoton}>⏮ Anterior</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.boton, styles.botonPrincipal]} onPress={handlePlayPause}>
+          <Text style={styles.textoBoton}>{isPlaying ? '⏸ Pausar' : '▶ Reproducir'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.boton, currentIndex === videos.length - 1 && styles.botonDesactivado]}
+          onPress={handleNext}
+          disabled={currentIndex === videos.length - 1}
+        >
+          <Text style={styles.textoBoton}>Siguiente ⏭</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.boton} onPress={handleRestart}>
+          <Text style={styles.textoBoton}>↺ Reiniciar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.boton} onPress={handleMute}>
+          <Text style={styles.textoBoton}>{isMuted ? '🔊 Sonido' : '🔇 Silenciar'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.botonSecundario} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.textoSecundario}>🏠 Volver al inicio</Text>
+        </TouchableOpacity>
+
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#D90429",
-    padding: 20,
-    alignItems: "center",
-  },
-
-  titulo: {
-    color: "#EDF2F4",
-    fontSize: 32,
-    fontWeight: "900",
-    marginTop: 30,
-    marginBottom: 25,
-  },
-
-  card: {
-    width: "100%",
-    maxWidth: 520,
-    backgroundColor: "#2B2D42",
-    borderRadius: 18,
-    padding: 20,
-    alignItems: "center",
-  },
-
-  subtitulo: {
-    color: "#EDF2F4",
-    fontSize: 22,
-    fontWeight: "800",
-    marginBottom: 18,
-    textAlign: "center",
-  },
-
-  reproductor: {
-    width: "100%",
-    backgroundColor: "#1a1a2e",
-    borderRadius: 18,
-    padding: 18,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-
-  imagen: {
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    borderWidth: 4,
-    borderColor: "#e94560",
-    marginBottom: 14,
-  },
-
-  estado: {
-    color: "#e94560",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-
-  descripcion: {
-    color: "#EDF2F4",
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 23,
-    marginBottom: 20,
-  },
-
-  botonesFila: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 14,
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-
-  boton: {
-    backgroundColor: "#e94560",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-  },
-
-  textoBoton: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-
-  botonSecundario: {
-    borderWidth: 1,
-    borderColor: "#EDF2F4",
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 12,
-  },
-
-  textoSecundario: {
-    color: "#EDF2F4",
-    fontWeight: "bold",
-  },
+  container: { flex: 1, backgroundColor: '#1a1a2e' },
+  content: { padding: 16, paddingBottom: 40 },
+  titulo: { color: '#e94560', fontSize: 28, fontWeight: '900', textAlign: 'center', marginTop: 10 },
+  jugador: { color: '#fff', fontSize: 16, textAlign: 'center', marginTop: 4 },
+  contador: { color: '#aaa', fontSize: 13, textAlign: 'center', marginTop: 2, marginBottom: 12 },
+  reproductorContainer: { width: '100%', height: 220, backgroundColor: '#000', borderRadius: 12, overflow: 'hidden', marginBottom: 16 },
+  video: { width: '100%', height: '100%' },
+  sinVideo: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  sinVideoTexto: { color: '#aaa', fontSize: 14 },
+  botonesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
+  boton: { backgroundColor: '#16213e', borderWidth: 1, borderColor: '#e94560', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10 },
+  botonPrincipal: { backgroundColor: '#e94560' },
+  botonDesactivado: { opacity: 0.3 },
+  textoBoton: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+  botonSecundario: { borderWidth: 1, borderColor: '#aaa', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10 },
+  textoSecundario: { color: '#aaa', fontWeight: 'bold' },
 });
