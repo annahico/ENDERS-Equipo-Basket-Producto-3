@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Video, ResizeMode } from "expo-av";
+import { VideoView, useVideoPlayer } from "expo-video";
 
-const videoMap = {
+const videosLocales = {
   'assets/videos/jugador1/video1.mp4': require('../assets/videos/jugador1/video1.mp4'),
   'assets/videos/jugador2/video1.mp4': require('../assets/videos/jugador2/video1.mp4'),
   'assets/videos/jugador3/video1.mp4': require('../assets/videos/jugador3/video1.mp4'),
@@ -11,80 +11,89 @@ const videoMap = {
 };
 
 export default function MultimediaScreen({ route, navigation }) {
-  const [currentIndex, setCurrentIndex] = useState(route.params?.videoIndex ?? 0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const videoRef = useRef(null);
+  const { player: jugador, videoIndex = 0 } = route.params || {};
+  const [indiceActual, setIndiceActual] = useState(route.params?.videoIndex ?? 0);
+  const [reproduciendo, setReproduciendo] = useState(false);
+  const [silenciado, setSilenciado] = useState(false);
+  const videos = jugador?.videos || [];
+  const videoActual = videos[indiceActual];
+  const fuenteVideoActual =
+    videosLocales[videoActual] || (typeof videoActual === 'string' && videoActual.startsWith('http')
+      ? videoActual
+      : null);
+  const reproductor = useVideoPlayer(fuenteVideoActual, video => {
+    video.loop = false;
+  });
 
-  if (!route.params?.player) {
+  useEffect(() => {
+    setIndiceActual(videoIndex);
+  }, [videoIndex, jugador?.id]);
+
+  useEffect(() => {
+    setReproduciendo(false);
+  }, [indiceActual]);
+
+  useEffect(() => {
+    reproductor.muted = silenciado;
+  }, [silenciado, reproductor]);
+
+  if (!jugador) {
     return (
       <View style={styles.container}>
         <Text style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>
           No se ha seleccionado ningún jugador.
         </Text>
+        <TouchableOpacity style={styles.botonSecundario} onPress={() => navigation.navigate('Listado')}>
+          <Text style={styles.textoSecundario}>Volver al listado</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  const { player } = route.params;
-  const videos = player.videos || [];
-  const currentVideoSource = videoMap[videos[currentIndex]];
-
-  useEffect(() => {
-    setIsPlaying(false);
-  }, [currentIndex]);
-
-  const handlePlayPause = async () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      await videoRef.current.pauseAsync();
+  const reproducirPausar = () => {
+    if (!fuenteVideoActual) return;
+    if (reproduciendo) {
+      reproductor.pause();
     } else {
-      await videoRef.current.playAsync();
+      reproductor.play();
     }
-    setIsPlaying(!isPlaying);
+    setReproduciendo(valorAnterior => !valorAnterior);
   };
 
-  const handlePrev = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  const videoAnterior = () => {
+    if (indiceActual > 0) setIndiceActual(indiceActual - 1);
   };
 
-  const handleNext = () => {
-    if (currentIndex < videos.length - 1) setCurrentIndex(currentIndex + 1);
+  const videoSiguiente = () => {
+    if (indiceActual < videos.length - 1) setIndiceActual(indiceActual + 1);
   };
 
-  const handleMute = async () => {
-    if (!videoRef.current) return;
-    await videoRef.current.setIsMutedAsync(!isMuted);
-    setIsMuted(!isMuted);
+  const cambiarSonido = () => {
+    setSilenciado(valorAnterior => !valorAnterior);
   };
 
-  const handleRestart = async () => {
-    if (!videoRef.current) return;
-    await videoRef.current.setPositionAsync(0);
-    await videoRef.current.playAsync();
-    setIsPlaying(true);
+  const reiniciarVideo = () => {
+    if (!fuenteVideoActual) return;
+    reproductor.replay();
+    reproductor.play();
+    setReproduciendo(true);
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
       <Text style={styles.titulo}>Highlights</Text>
-      <Text style={styles.jugador}>{player.nombre} {player.apellidos}</Text>
-      <Text style={styles.contador}>Vídeo {currentIndex + 1} de {videos.length}</Text>
+      <Text style={styles.jugador}>{jugador.nombre} {jugador.apellidos}</Text>
+      <Text style={styles.contador}>Vídeo {indiceActual + 1} de {videos.length}</Text>
 
       <View style={styles.reproductorContainer}>
-        {currentVideoSource ? (
-          <Video
-            ref={videoRef}
-            key={currentIndex}
-            source={currentVideoSource}
+        {fuenteVideoActual ? (
+          <VideoView
+            key={indiceActual}
+            player={reproductor}
             style={styles.video}
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping={false}
-            isMuted={isMuted}
-            onPlaybackStatusUpdate={status => {
-              if (status.isLoaded) setIsPlaying(status.isPlaying);
-            }}
+            contentFit="contain"
+            nativeControls
           />
         ) : (
           <View style={styles.sinVideo}>
@@ -96,35 +105,35 @@ export default function MultimediaScreen({ route, navigation }) {
       <View style={styles.botonesGrid}>
 
         <TouchableOpacity
-          style={[styles.boton, currentIndex === 0 && styles.botonDesactivado]}
-          onPress={handlePrev}
-          disabled={currentIndex === 0}
+          style={[styles.boton, indiceActual === 0 && styles.botonDesactivado]}
+          onPress={videoAnterior}
+          disabled={indiceActual === 0}
         >
           <Text style={styles.textoBoton}>⏮ Anterior</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.boton, styles.botonPrincipal]} onPress={handlePlayPause}>
-          <Text style={styles.textoBoton}>{isPlaying ? '⏸ Pausar' : '▶ Reproducir'}</Text>
+        <TouchableOpacity style={[styles.boton, styles.botonPrincipal]} onPress={reproducirPausar}>
+          <Text style={styles.textoBoton}>{reproduciendo ? '⏸ Pausar' : '▶ Reproducir'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.boton, currentIndex === videos.length - 1 && styles.botonDesactivado]}
-          onPress={handleNext}
-          disabled={currentIndex === videos.length - 1}
+          style={[styles.boton, indiceActual === videos.length - 1 && styles.botonDesactivado]}
+          onPress={videoSiguiente}
+          disabled={indiceActual === videos.length - 1}
         >
           <Text style={styles.textoBoton}>Siguiente ⏭</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.boton} onPress={handleRestart}>
+        <TouchableOpacity style={styles.boton} onPress={reiniciarVideo}>
           <Text style={styles.textoBoton}>↺ Reiniciar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.boton} onPress={handleMute}>
-          <Text style={styles.textoBoton}>{isMuted ? '🔊 Sonido' : '🔇 Silenciar'}</Text>
+        <TouchableOpacity style={styles.boton} onPress={cambiarSonido}>
+          <Text style={styles.textoBoton}>{silenciado ? '🔊 Sonido' : '🔇 Silenciar'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botonSecundario} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.textoSecundario}>🏠 Volver al inicio</Text>
+        <TouchableOpacity style={styles.botonSecundario} onPress={() => navigation.navigate('Listado')}>
+          <Text style={styles.textoSecundario}>Volver al inicio</Text>
         </TouchableOpacity>
 
       </View>
