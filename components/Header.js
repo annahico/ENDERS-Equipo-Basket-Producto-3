@@ -29,8 +29,8 @@ export default function Header({ navigation }) {
 
       {menuOpen && (
         <View style={styles.menu}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.menuLink}>Home</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Listado')}>
+            <Text style={styles.menuLink}>Inicio</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Listado')}>

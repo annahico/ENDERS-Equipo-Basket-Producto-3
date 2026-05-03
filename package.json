@@ -3,21 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --web",
+    "expo": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "expo export --platform web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
-    "@react-navigation/core": "^7.17.2",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
+    "expo-video": "~3.0.16",
     "firebase": "^12.12.1",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react-dom": "^19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "^2.28.0",
     "react-native-safe-area-context": "~5.6.0",
