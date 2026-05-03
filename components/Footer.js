@@ -26,10 +26,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 28,
         paddingVertical: 40,
     },
-     logo: {
+        logo: {
         width: 80,
         height: 80,
-        marginBottom: 10,
+        marginBottom: 12,
+        backgroundColor: '#2B2D42', 
+        padding: 10,
+        borderRadius: 10,
     },
     footerTitle: {
         color: '#2B2D42',
