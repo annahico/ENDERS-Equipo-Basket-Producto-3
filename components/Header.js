@@ -37,6 +37,10 @@ export default function Header({ navigation }) {
             <Text style={styles.menuLink}>Plantilla</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity onPress={() => navigation.navigate('Multimedia')}>
+            <Text style={styles.menuLink}>Multimedia</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity>
             <Text style={styles.menuLink}>Noticias</Text>
           </TouchableOpacity>
