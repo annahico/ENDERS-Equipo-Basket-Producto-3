@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from "react-native";
 import { VideoView, useVideoPlayer } from "expo-video";
 
 const videosLocales = {
@@ -80,7 +80,10 @@ export default function MultimediaScreen({ route, navigation }) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.container, Platform.OS === 'web' && styles.webScroll]}
+      contentContainerStyle={styles.content}
+    >
 
       <Text style={styles.titulo}>Highlights</Text>
       <Text style={styles.jugador}>{jugador.nombre} {jugador.apellidos}</Text>
@@ -143,7 +146,8 @@ export default function MultimediaScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#1a1a2e' },
-  content: { padding: 16, paddingBottom: 40 },
+  webScroll: { height: '100vh', maxHeight: '100vh', overflowY: 'auto' },
+  content: { flexGrow: 1, padding: 16, paddingBottom: 40 },
   titulo: { color: '#e94560', fontSize: 28, fontWeight: '900', textAlign: 'center', marginTop: 10 },
   jugador: { color: '#fff', fontSize: 16, textAlign: 'center', marginTop: 4 },
   contador: { color: '#aaa', fontSize: 13, textAlign: 'center', marginTop: 2, marginBottom: 12 },

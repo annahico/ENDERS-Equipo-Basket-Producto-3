@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  Platform,
 } from 'react-native';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase.config';
@@ -94,6 +95,7 @@ export default function ListadoScreen({ navigation }) {
 
   return (
     <FlatList
+      style={[styles.list, Platform.OS === 'web' && styles.webScroll]}
       data={filteredPlayers}
       keyExtractor={item => item.id}
       renderItem={renderPlayer}
@@ -156,7 +158,18 @@ export default function ListadoScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+  },
+
+  webScroll: {
+    height: '100vh',
+    maxHeight: '100vh',
+    overflowY: 'auto',
+  },
+
   listContent: {
+    flexGrow: 1,
     backgroundColor: '#D90429',
   },
 

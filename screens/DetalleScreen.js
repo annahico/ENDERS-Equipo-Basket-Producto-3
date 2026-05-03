@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, Image, ScrollView, TouchableOpacity,
-  Modal, StyleSheet, Dimensions
+  Modal, StyleSheet, Dimensions, Platform
 } from 'react-native';
 
 const imagenesJugadores = {
@@ -57,7 +57,10 @@ export default function DetalleScreen({ route, navigation }) {
   const camposExtra = Object.entries(player).filter(([campo]) => !camposPrincipalesJugador.has(campo));
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[styles.container, Platform.OS === 'web' && styles.webScroll]}
+      contentContainerStyle={styles.content}
+    >
 
       {/* Foto con zoom */}
       <TouchableOpacity onPress={() => setZoomVisible(true)}>
@@ -150,6 +153,8 @@ const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#1a1a2e' },
+  webScroll: { height: '100vh', maxHeight: '100vh', overflowY: 'auto' },
+  content: { flexGrow: 1 },
   estadoVacio: { flex: 1, backgroundColor: '#1a1a2e', justifyContent: 'center', padding: 20 },
   textoVacio: { color: '#fff', textAlign: 'center', marginBottom: 16 },
   foto: { width: '100%', height: 300, resizeMode: 'cover' },
