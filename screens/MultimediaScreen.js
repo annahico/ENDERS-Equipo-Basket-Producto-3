@@ -145,21 +145,95 @@ export default function MultimediaScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a1a2e' },
-  webScroll: { height: '100vh', maxHeight: '100vh', overflowY: 'auto' },
-  content: { flexGrow: 1, padding: 16, paddingBottom: 40 },
-  titulo: { color: '#e94560', fontSize: 28, fontWeight: '900', textAlign: 'center', marginTop: 10 },
-  jugador: { color: '#fff', fontSize: 16, textAlign: 'center', marginTop: 4 },
-  contador: { color: '#aaa', fontSize: 13, textAlign: 'center', marginTop: 2, marginBottom: 12 },
-  reproductorContainer: { width: '100%', height: 220, backgroundColor: '#000', borderRadius: 12, overflow: 'hidden', marginBottom: 16 },
-  video: { width: '100%', height: '100%' },
-  sinVideo: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  sinVideoTexto: { color: '#aaa', fontSize: 14 },
-  botonesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
-  boton: { backgroundColor: '#16213e', borderWidth: 1, borderColor: '#e94560', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10 },
-  botonPrincipal: { backgroundColor: '#e94560' },
-  botonDesactivado: { opacity: 0.3 },
-  textoBoton: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
-  botonSecundario: { borderWidth: 1, borderColor: '#aaa', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10 },
-  textoSecundario: { color: '#aaa', fontWeight: 'bold' },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#1a1a2e' 
+  },
+  webScroll: { 
+    height: '100vh', 
+    maxHeight: '100vh', 
+    overflowY: 'auto' 
+  },
+  content: { 
+    flexGrow: 1, 
+    padding: 16, 
+    paddingBottom: 40 
+  },
+  titulo: { 
+    color: '#e94560', 
+    fontSize: 28, 
+    fontWeight: '900', 
+    textAlign: 'center', 
+    marginTop: 10 
+  },
+  jugador: { 
+    color: '#fff', 
+    fontSize: 16, 
+    textAlign: 'center', 
+    marginTop: 4 
+  },
+  contador: { 
+    color: '#aaa', 
+    fontSize: 13, 
+    textAlign: 'center', 
+    marginTop: 2, 
+    marginBottom: 12 
+  },
+  reproductorContainer: { 
+    width: '100%', 
+    height: 220, 
+    backgroundColor: '#000', 
+    borderRadius: 12, 
+    overflow: 'hidden', 
+    marginBottom: 16 
+  },
+  video: { 
+    width: '100%', 
+    height: '100%' 
+  },
+  sinVideo: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  sinVideoTexto: { 
+    color: '#aaa', 
+    fontSize: 14 
+  },
+  botonesGrid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    gap: 10, 
+    justifyContent: 'center' 
+  },
+  boton: { 
+    backgroundColor: '#16213e', 
+    borderWidth: 1, 
+    borderColor: '#e94560', 
+    paddingVertical: 12, 
+    paddingHorizontal: 16, 
+    borderRadius: 10 
+  },
+  botonPrincipal: { 
+    backgroundColor: '#e94560' 
+  },
+  botonDesactivado: { 
+    opacity: 0.3 
+  },
+  textoBoton: { 
+    color: '#fff', 
+    fontWeight: 'bold', 
+    fontSize: 13 
+  },
+  botonSecundario: { 
+    borderWidth: 1, 
+    borderColor: '#aaa', 
+    paddingVertical: 12, 
+    paddingHorizontal: 16, 
+    borderRadius: 10 
+  },
+  textoSecundario: { 
+    color: '#aaa', 
+    fontWeight: 'bold' 
+  },
 });

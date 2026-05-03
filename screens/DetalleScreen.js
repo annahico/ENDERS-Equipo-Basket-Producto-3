@@ -64,7 +64,9 @@ export default function DetalleScreen({ route, navigation }) {
 
       {/* Foto con zoom */}
       <TouchableOpacity onPress={() => setZoomVisible(true)}>
-        <Image source={fotoSource} style={styles.foto} />
+        <View style={styles.fotoWrapper}>
+          <Image source={fotoSource} style={styles.foto} />
+        </View>
         <Text style={styles.zoomHint}>Toca la foto para ampliar</Text>
       </TouchableOpacity>
 
@@ -152,29 +154,142 @@ export default function DetalleScreen({ route, navigation }) {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a1a2e' },
-  webScroll: { height: '100vh', maxHeight: '100vh', overflowY: 'auto' },
-  content: { flexGrow: 1 },
-  estadoVacio: { flex: 1, backgroundColor: '#1a1a2e', justifyContent: 'center', padding: 20 },
-  textoVacio: { color: '#fff', textAlign: 'center', marginBottom: 16 },
-  foto: { width: '100%', height: 300, resizeMode: 'cover' },
-  zoomHint: { color: '#e94560', textAlign: 'center', fontSize: 12, marginTop: 4 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
-  fotoZoom: { width: width, height: width },
-  cerrarZoom: { color: '#fff', marginTop: 16, fontSize: 13 },
-  infoContainer: { padding: 20 },
-  nombre: { color: '#fff', fontSize: 26, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
-  seccionTitulo: { color: '#e94560', fontSize: 14, fontWeight: 'bold', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
-  card: { backgroundColor: '#16213e', borderRadius: 12, padding: 16, marginBottom: 20 },
-  fila: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8 },
-  separador: { height: 1, backgroundColor: '#333' },
-  label: { color: '#aaa', fontSize: 15, flex: 1 },
-  valor: { color: '#e94560', fontSize: 15, fontWeight: 'bold', flex: 1, textAlign: 'right' },
-  videoItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#333' },
-  videoIcono: { color: '#e94560', fontSize: 20, marginRight: 12 },
-  videoInfo: { flex: 1 },
-  videoTitulo: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-  videoRuta: { color: '#aaa', fontSize: 11, marginTop: 2 },
-  botonMultimedia: { backgroundColor: '#e94560', borderRadius: 10, padding: 14, alignItems: 'center', marginBottom: 20 },
-  botonTexto: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#1a1a2e' 
+  },
+  webScroll: { 
+    height: '100vh', 
+    maxHeight: '100vh', 
+    overflowY: 'auto' 
+  },
+  content: { 
+    flexGrow: 1 
+  },
+  estadoVacio: { 
+    flex: 1, 
+    backgroundColor: '#1a1a2e', 
+    justifyContent: 'center', 
+    padding: 20 
+  },
+  textoVacio: { 
+    color: '#fff', 
+    textAlign: 'center', 
+    marginBottom: 16 
+  },
+  fotoWrapper: {
+    width: '100%',
+    height: 360,
+    backgroundColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  foto: { 
+    width: '100%', 
+    height: '100%', 
+    resizeMode: 'contain' 
+  },
+  zoomHint: { 
+    color: '#e94560', 
+    textAlign: 'center', 
+    fontSize: 12, 
+    marginTop: 4 
+  },
+  modalOverlay: { 
+    flex: 1, 
+    backgroundColor: 'rgba(0,0,0,0.9)', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  fotoZoom: { 
+    width: width, 
+    height: width 
+  },
+  cerrarZoom: { 
+    color: '#fff', 
+    marginTop: 16, 
+    fontSize: 13 
+  },
+  infoContainer: { 
+    padding: 20 
+  },
+  nombre: { 
+    color: '#fff', 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    marginBottom: 16, 
+    textAlign: 'center' 
+  },
+  seccionTitulo: { 
+    color: '#e94560', 
+    fontSize: 14, 
+    fontWeight: 'bold', 
+    marginBottom: 8, 
+    textTransform: 'uppercase', 
+    letterSpacing: 1 
+  },
+  card: { 
+    backgroundColor: '#16213e', 
+    borderRadius: 12, 
+    padding: 16, 
+    marginBottom: 20 
+  },
+  fila: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    paddingVertical: 8 
+  },
+  separador: { 
+    height: 1, 
+    backgroundColor: '#333' 
+  },
+  label: { 
+    color: '#aaa', 
+    fontSize: 15, 
+    flex: 1 
+  },
+  valor: { 
+    color: '#e94560', 
+    fontSize: 15, 
+    fontWeight: 'bold', 
+    flex: 1, 
+    textAlign: 'right' 
+  },
+  videoItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingVertical: 10, 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#333' 
+  },
+  videoIcono: { 
+    color: '#e94560', 
+    fontSize: 20, 
+    marginRight: 12 
+  },
+  videoInfo: { 
+    flex: 1 
+  },
+  videoTitulo: { 
+    color: '#fff', 
+    fontSize: 14, 
+    fontWeight: 'bold' 
+  },
+  videoRuta: { 
+    color: '#aaa', 
+    fontSize: 11, 
+    marginTop: 2 
+  },
+  botonMultimedia: { 
+    backgroundColor: '#e94560', 
+    borderRadius: 10, 
+    padding: 14, 
+    alignItems: 'center', 
+    marginBottom: 20 
+  },
+  botonTexto: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: 'bold' 
+  },
 });
